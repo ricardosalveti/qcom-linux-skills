@@ -58,6 +58,46 @@
       ]
     },
     {
+      "name": "qcom-deb-build-image",
+      "displayName": "Build a Debian Image (qcom-deb-images)",
+      "owner": "qualcomm-linux",
+      "description": "Build a Qualcomm Linux Debian (trixie) image from qcom-deb-images with debos",
+      "agents": ["claude", "codex", "cursor"],
+      "category": "devtools",
+      "tags": [
+        "debian",
+        "trixie",
+        "debos",
+        "qcom-deb-images",
+        "rootfs",
+        "disk-image",
+        "ufs",
+        "sdcard",
+        "kernel-deb",
+        "u-boot"
+      ],
+      "useCases": [
+        "Build a Debian image for the RB3 Gen2, RB1 or Arduino UNO Q",
+        "Build qcom-deb-images with debos",
+        "Make a trixie image for a Qualcomm board",
+        "Build disk-ufs.img or disk-sdcard.img",
+        "Build a Debian image with a locally built qcom-next kernel"
+      ],
+      "license": "BSD-3-Clause-Clear",
+      "homepage": "https://github.com/qualcomm-linux/qcom-linux-skills",
+      "versions": [
+        {
+          "version": "0.1",
+          "path": "skills/qcom-deb-build-image",
+          "docPath": "skills/qcom-deb-build-image/SKILL.md",
+          "files": ["skills/qcom-deb-build-image/**"],
+          "compatibility": {
+            "hostOs": ["linux"]
+          }
+        }
+      ]
+    },
+    {
       "name": "qcom-yocto-build-image",
       "displayName": "Build a Yocto Image (meta-qcom)",
       "owner": "qualcomm-linux",
