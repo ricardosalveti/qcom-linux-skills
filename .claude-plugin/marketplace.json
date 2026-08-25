@@ -52,6 +52,13 @@
       "skills": ["./skills/qcom-kernel-qcom-next-build"]
     },
     {
+      "name": "qcom-kernel-platform-backport",
+      "source": "./",
+      "strict": false,
+      "description": "Backport upstream board/platform enablement into the qualcomm-linux LTS kernel branch, with local and hardware validation",
+      "skills": ["./skills/qcom-kernel-platform-backport"]
+    },
+    {
       "name": "qcom-yocto-pre-pr-checks",
       "source": "./",
       "strict": false,

@@ -22,6 +22,7 @@ for the product documentation these workflows are based on.
 | [qcom-flash-qdl](skills/qcom-flash-qdl/SKILL.md) | users | Flash a board in EDL mode with the QDL tool |
 | [qcom-boot-validate](skills/qcom-boot-validate/SKILL.md) | users, developers | Validate that a board boots to a working login shell over the serial console |
 | [qcom-kernel-qcom-next-build](skills/qcom-kernel-qcom-next-build/SKILL.md) | developers | Cross-build the qcom-next kernel standalone (defconfig + qcom.config fragments) |
+| [qcom-kernel-platform-backport](skills/qcom-kernel-platform-backport/SKILL.md) | developers, maintainers | Backport upstream board/platform enablement into the qualcomm-linux LTS kernel branch, with local and hardware validation |
 | [qcom-yocto-pre-pr-checks](skills/qcom-yocto-pre-pr-checks/SKILL.md) | developers | Run meta-qcom's CI-parity checks (patchreview, check-layer, oe-selftest) before a PR |
 | [qcom-lava-log](skills/qcom-lava-log/SKILL.md) | developers | Fetch and analyze LAVA test job logs, results, and definitions via the LAVA REST API |
 | [qcom-yocto-update-base-lock](skills/qcom-yocto-update-base-lock/SKILL.md) | maintainers | Refresh the layer commit pins in meta-qcom's ci/base.lock.yml with a changelog-style commit |

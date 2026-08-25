@@ -275,6 +275,45 @@
       ]
     },
     {
+      "name": "qcom-kernel-platform-backport",
+      "displayName": "Backport Platform Enablement to the LTS Kernel",
+      "owner": "qualcomm-linux",
+      "description": "Backport upstream board/platform enablement into the qualcomm-linux LTS kernel branch, with local and hardware validation",
+      "agents": ["claude", "codex", "cursor"],
+      "category": "devtools",
+      "tags": [
+        "kernel",
+        "backport",
+        "lts",
+        "qcom-6.18.y",
+        "devicetree",
+        "dtbs-check",
+        "checkpatch",
+        "cherry-pick",
+        "board-enablement"
+      ],
+      "useCases": [
+        "Backport board support to the 6.18 LTS kernel",
+        "Identify the patches to backport for a new platform",
+        "Get a board working on the qualcomm-linux LTS kernel",
+        "Prepare a kernel pull request for a newly enabled board",
+        "Check that a backport series does not regress other platforms"
+      ],
+      "license": "BSD-3-Clause-Clear",
+      "homepage": "https://github.com/qualcomm-linux/qcom-linux-skills",
+      "versions": [
+        {
+          "version": "0.1",
+          "path": "skills/qcom-kernel-platform-backport",
+          "docPath": "skills/qcom-kernel-platform-backport/SKILL.md",
+          "files": ["skills/qcom-kernel-platform-backport/**"],
+          "compatibility": {
+            "hostOs": ["linux"]
+          }
+        }
+      ]
+    },
+    {
       "name": "qcom-yocto-pre-pr-checks",
       "displayName": "meta-qcom Pre-PR Checks",
       "owner": "qualcomm-linux",
