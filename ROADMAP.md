@@ -43,6 +43,7 @@ Contributions for any entry are welcome — see
 | Skill | Priority | Status | Scope |
 |---|---|---|---|
 | `qcom-kernel-qcom-next-build` | P1 | available | Standalone cross-build of qcom-next: `defconfig` + `prune.config` + `qcom.config` fragment merge, Image/dtbs/modules |
+| `qcom-kernel-platform-backport` | P1 | available | Backport upstream board/platform enablement onto an LTS branch (`qcom-6.18.y`): candidate triage, authorship-preserving cherry-picks, cross-platform `CHECK_DTBS` regression check, hardware validation, PR and CI-checker triage |
 | `qcom-kernel-test-on-device` | P2 | planned | Test a modified kernel on hardware via meta-qcom (SRCREV/AUTOREV override, devupstream) or by swapping Image/dtb, ending in a boot validation |
 | `qcom-yocto-kernel-srcrev-bump` | P2 | planned | Bump `SRCREV`/tag/`LINUX_VERSION` in meta-qcom's `linux-qcom-next_git.bb` to the latest qcom-next tag with a changelog-style commit |
 | `qcom-kernel-config-change` | P3 | planned | Enable/disable a kernel option in the right fragment (`qcom.config` vs `qcom_debug.config` vs recipe fragment) |
