@@ -56,6 +56,30 @@ run_in_kmake_image make -j"$(nproc)" O="$temp_out" CHECK_DTBS=y "$target" 2>&1 \
   | grep -vE '^\s*(DTC|DTCO|LINT|CHECK|SCHEMA|UPD|GEN|CALL|SYNC)\b' >> "$log_file"
 ```
 
+### Warnings you cannot reproduce locally
+
+CI runs inside `kmake-image` with its own `dtschema`, and it does not log the
+version. A different `dtschema` sees different things, so "clean here, warnings
+there" is a real outcome and not proof you missed something.
+
+Seen in practice: CI reported `iommu-map:2: [0, 1] is too short` on every board
+of an SoC family, while local runs with `dtschema` 2026.6 produced **zero**
+`iommu-map` warnings at either base or head. The DT was correct — the SMMU had
+`#iommu-cells = <2>`, so the five-cell entries the series backported are the
+required form, and `qcom/for-next` carried byte-identical DT across a dozen
+platforms.
+
+Before treating such a warning as yours to fix:
+
+1. check whether upstream carries the same DT (`git show <upstream-ref>:<file>`)
+   — if the warning is inherent to an upstream change, every platform in that
+   series has it and the fix belongs upstream, not in your backport;
+2. record your local `dtschema` version (`pip show dtschema`) and say in the PR
+   that you could not reproduce it, rather than asserting a mechanism you have
+   not observed;
+3. ask whoever owns the CI image which `dtschema` it ships. That single fact
+   usually settles it, and it is not recoverable from the job log.
+
 ## checkpatch
 
 ```bash
@@ -81,8 +105,14 @@ in `Documentation/devicetree/bindings/vendor-prefixes.yaml`. Backport it.
 Note that running checkpatch locally under-reports compared with CI. A working
 clone has mainline and linux-next as remotes, so checkpatch resolves the
 mainline SHAs in `Fixes:` tags and stays quiet; CI's tree does not have those
-objects and reports `Unknown commit id` for each. Do not read a cleaner local
-run as a cleaner CI run.
+objects and reports `Unknown commit id` for each. Measured on one series: 27
+findings locally, 29 in CI, the difference being exactly two `Unknown commit
+id` lines. Do not read a cleaner local run as a cleaner CI run.
+
+One of those two referenced a commit *in the same series* — a later fix carried
+`Fixes:` pointing at the mainline SHA of a board commit the series itself
+backports. It is unresolvable in CI by construction, and rewriting it to the
+local SHA would break the trace to upstream. Leave it.
 
 In the PR, map each remaining warning to the commit and state that it is
 inherited verbatim, so a reviewer can confirm without re-deriving it.
@@ -102,17 +132,30 @@ Consequences for a backport series:
   commits (downstream-only config and DT changes). A locally authored patch
   also has no `Link:` to give. Either post it upstream and use `FROMLIST:`,
   carry it in the BSP layer instead, or justify the failure.
-- **Adapted backports always fail check 3.** A partial hunk, a renamed include,
-  or keeping a local divergence all make the diff differ from the posted patch
-  — which is precisely what `BACKPORT:` announces. The script has no exemption
-  for the prefix, so expect one failure per adapted commit and explain each in
-  the PR. Worth proposing upstream that `BACKPORT:` relax the diff comparison.
+- **Check 3 compares content, not context.** A `BACKPORT:` whose conflict was
+  context-only — the surrounding lines moved, but the added and removed lines
+  are the ones upstream posted — passes. What fails is a real content
+  divergence: a partial hunk out of a tree-wide commit, a dropped hunk that was
+  already present, a diff git's rename detection moved to another file, or a
+  kept local divergence.
+
+  So the failure count tracks how much you actually changed, not how many
+  commits carry the prefix. Two measured series on the same branch:
+
+  | Series | `BACKPORT:` commits | Failed check 3 |
+  |---|---|---|
+  | ventuno-q (mostly context-only conflicts) | 10 | 1 |
+  | uno-q (partial hunks, path changes) | 7 | 7 |
+
+  Expect one failure per *genuinely* divergent commit and explain each in the
+  PR. Worth proposing upstream that `BACKPORT:` relax the comparison for the
+  cases that remain.
 - **Check 4 is a useful signal**: an author mismatch means the cherry-pick lost
   authorship. Fix that; never justify it.
 
 Note that check 3 passing is strong evidence a `Link:` is correct — `b4`
-fetched it and the diffs matched byte for byte. Use it to confirm a link you
-could not verify by hand.
+fetched it and the diffs matched. Use it to confirm a link you could not verify
+by hand.
 
 ## The rest
 
