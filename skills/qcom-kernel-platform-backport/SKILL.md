@@ -152,6 +152,44 @@ Leave it out when it is not enablement:
   camera pinctrl when there is no camera);
 - accessory hardware (add-on panels, camera modules, carrier boards).
 
+> **The "other board" exclusion does not survive a shared-file change.** Those
+> rules filter by *board*. A commit that edits a shared file — the SoC dtsi, a
+> binding — has to be reasoned about by *file*, because the rest of its upstream
+> series may fix other files that include the very node you just changed.
+> Taking half of a tree-wide fix leaves the tree partly converted, which is
+> worse than uniformly wrong and is what a reviewer notices first.
+>
+> This is easy to get wrong. One series backported the PCIe `iommu-map`
+> correction (four cells to five, as `#iommu-cells = <2>` requires) into
+> `monaco.dtsi` and `monaco-monza-som.dtsi`, but filtered out the sibling
+> commit for `monaco-evk-ifp-mezzanine.dtso` as "a different board" — leaving
+> the only four-cell map in the family, against the SMMU it had just changed.
+>
+> After taking a commit that touches a shared file, sweep its series:
+>
+> ```bash
+> # the rest of the same tree-wide fix
+> git log --oneline "${since}..${upstream}" --grep="Fix the PCIe iommu-map"
+> # who else references the node you changed?
+> grep -rl '&pcie_smmu' arch/arm64/boot/dts/qcom/
+> ```
+>
+> Search for the **label you changed**, not for files including the dtsi. An
+> overlay consumes base-tree labels without including anything — the `.dtso` in
+> the case above has no `#include` of `monaco.dtsi` at all, so a search for the
+> dtsi finds every board in the family except the one that was actually wrong.
+>
+> Then assert the family agrees, rather than assuming it. Count the old and new
+> forms across every file the label search returned; the old form must be gone:
+>
+> ```bash
+> grep -c '<0x[0-9a-f]* &pcie_smmu 0x[0-9a-f]* 0x1>' <each file>   # want 0
+> ```
+>
+> `dtbs-compare.sh --match` will not catch this on its own: the leftover file
+> is usually as malformed after your series as before it, so it shows up as a
+> *pre-existing* warning, not a new one.
+
 When a needed patch is not upstream at all, say so plainly and scope it out
 rather than inventing a local version — see *Known gaps* in the PR text.
 
